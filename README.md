@@ -150,3 +150,8 @@ pipenv run python ./hn_tests.py
 ```
 
 You should be able to watch the test execute in the `vncviewer` window.
+
+## Finally, the Most Important Part
+
+Cleanup! Make sure you **destroy** your cluster so you no longer need to pay for it
+:-)
