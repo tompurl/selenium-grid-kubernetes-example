@@ -20,9 +20,11 @@ You have installed the followind:
    - `Kubernetes -> Create -> Clusters`
 3. Under **Choose a datacenter region** choose the default.
 4. Under **Choose cluster capacity** choose the following:
-   - **Machine Type**: General Purpose nodes
-   - **Number Nodes**: 1
-5. The **Monthly Rate** for this should be $60 / month. Hopefully we'll only use it for less than a couple of hours (at $0.09 / hour).
+   - **Machine Type**: Standard nodes (shared CPU)
+   - **Number Nodes**: 2
+   - **vCPU's**: 4
+   - **RAM**: 8 GB
+5. The **Monthly Rate** for this should be $80 / month. Hopefully we'll only use it for less than a couple of hours (at $0.12 / hour).
 6. Under the **Choose a name** choose something descriptiive like **selenium-test**.
 7. Click on the **Create Cluster** button.
 
