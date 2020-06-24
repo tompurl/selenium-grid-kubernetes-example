@@ -5,16 +5,6 @@ Library                     SeleniumLibrary
 Test Setup                  Start browser
 Test Teardown               Close All Browsers
 
-
-*** Variables ***
-${URL}                      https://www.tompurl.com
-${BROWSER}                  chrome
-${ALIAS}                    None
-${REMOTE_URL}               http://david:4444/wd/hub
-${ENABLE_VIDEO}             ${True}
-&{DESIRED_CAPABILITIES}     browserName=chrome    version=83.0    enableVNC=${True}    enableVideo=${ENABLE_VIDEO}
-
-
 *** Keywords ***
 Start Browser
     [Documentation]         Start browser on Selenium Grid
@@ -24,6 +14,7 @@ Start Browser
 *** Test Cases ***
 Test Google
     [Documentation]         Test Google
+    Log Variables
     Capture Page Screenshot
     Sleep   15
     Wait Until Page Contains    Datsun
