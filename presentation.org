@@ -1,0 +1,124 @@
+#+TITLE: Dipping Our Toes Into Kubernetes For 12¢
+
+* Who am I?
+  - Tom Purl (https://www.tompurl.com)
+  - Automation Engineer at Wi-Tronix LLC
+    - My views are my own and do not represent my employer
+  - Likes to build cool things and share them with others
+* What are We Doing Today?
+  - Having fun?
+  - Building a debug-able Selenium Grid against which we can run automated UI tests.
+  - Learning a little about Kubernetes
+* Related Code Repo
+  - https://github.com/tompurl/selenium-grid-kubernetes-example
+* Demo!
+** Setting Up the Cluster
+   #+BEGIN_NOTES
+   - This will be done ahead of time
+     - 2 nodes, each with 8 GB of RAM and 4 VCPU's 
+   - This is the "control plane", which seems to be a fancy way of saying an admin
+     interface.
+   #+END_NOTES
+   - https://github.com/tompurl/selenium-grid-kubernetes-example#create-your-cluster
+** Selenium Installation
+*** kubectl - The Kubernetes Admin Command-Line Interface
+    - =kubectl= is a tool that runs on your client that administers your Kubernetes
+      cluster.
+*** How We're Installing - Helm
+    #+BEGIN_NOTES
+    - Becoming a de-facto standard for package management
+    - Similar to =apt= for Debian or =homebrew= for a Mac
+    - Far from perfect :-)
+    #+END_NOTES
+    - https://helm.sh/
+    - Very popular tool for deploying complete systems on top of Kubernetes
+*** What We're Installing - Selenium Grid
+    #+BEGIN_NOTES
+    - Don't worry if you don't know anything about automated testing or Selenium
+    - This is a means to an end
+    - Good beginner example because there's not state
+    #+END_NOTES
+    - https://www.selenium.dev/documentation/en/grid/
+    - Smart proxy for hosting web browser instances that can be driven using
+      automated browser tests
+*** How We're Configuring It
+    #+BEGIN_NOTES
+    - YAML is fhe config format.
+    - The format of this file is specified mostly by the author of the Helm Chart.
+    - *ClusterIP* means "create a service with a  private IP address"
+    - If it was of type *LoadBalancer* then it would create a public-facing service.
+    - =chromeDebug.enabled= means use the "debug" version of the Chrome Docker image.
+    #+END_NOTES
+
+    #+BEGIN_SRC sh :wrap src yaml :exports results :results code
+      cat values.yaml
+    #+END_SRC
+
+    #+RESULTS:
+    #+begin_src yaml
+    hub:
+      serviceType: ClusterIP
+    chromeDebug:
+      enabled: true
+    #+end_src
+*** More Installation Options Here
+    - https://hub.helm.sh/charts/stable/selenium
+*** Installation Command
+    #+BEGIN_SRC sh
+      # See https://github.com/tompurl/selenium-grid-kubernetes-example#configure-kubeconfig
+      # for kubectl config steps.
+      helm install selenium-test -f values.yaml stable/selenium
+    #+END_SRC
+** Kicking the Tires
+*** Pods & Services
+    #+BEGIN_SRC sh
+      kubectl get pods
+      kubectl get svc
+    #+END_SRC
+*** What's My App's Admin Interface URL?
+    #+BEGIN_NOTES
+    - View the private IP and port
+    - "Manual" port-forwarding is a bit tricky
+    - =kubectl= makes it easy
+    #+END_NOTES
+
+    #+BEGIN_SRC sh
+      kubectl port-forward $HUB_POD 8080:8080
+    #+END_SRC
+*** What's My App's Proxy URL
+    - Selenium Grid also needs a "proxy" URL to which you send automation commands
+
+    #+BEGIN_SRC sh 
+      kubectl port-forward $HUB_POD 4444:4444
+    #+END_SRC
+*** Running the Tests
+    #+BEGIN_NOTES
+    - Tests are written using the Robot Framework
+    - Show the code of one of the tests
+    #+END_NOTES
+    This test...
+    - Opens a Chrome browser
+    - Visits my home page
+    - Sleeps a little so I can see what's happening :-)
+    - Looks for the word "Datsun"
+    - Closes the browser
+*** Test Source Code
+    - https://github.com/tompurl/selenium-grid-kubernetes-example/blob/master/tests/test1.robot
+*** Running the Test
+    #+BEGIN_NOTES
+    - Visit the Selenium Hub URL
+    #+END_NOTES
+
+    #+BEGIN_SRC sh
+      # Run tests
+      make test
+      # Check output
+      firefox Output/log.html
+    #+END_SRC
+*** Debugging the Test
+    - Port-forward VNC
+    - Connect using a VNC client
+** Throw It All Away :-)
+   #+BEGIN_SRC sh
+     kubectl uninstall selenium-test
+   #+END_SRC
