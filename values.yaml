@@ -2,3 +2,6 @@ hub:
   serviceType: ClusterIP
 chromeDebug:
   enabled: true
+firefoxDebug:
+  enabled: true
+  replicas: 2
