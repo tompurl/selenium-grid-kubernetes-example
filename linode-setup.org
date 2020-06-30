@@ -1,0 +1,40 @@
+#+TITLE: Linode Setup
+
+* Prerequisites
+
+  - Install the =linode-cli= tool
+  - Create a linode account
+  - Install =kubectl=
+
+* Create a cluster
+
+  #+BEGIN_SRC sh :dir /ssh:david:src/selenium-grid-kubernetes-example
+    linode-cli lke cluster-create \
+      --label selenium-test-$(date +%Y%m%d%H%M) \
+      --region us-central \
+      --k8s_version 1.17 \
+      --node_pools.type g6-standard-4 --node_pools.count 3 \
+      --tags demo
+      --text
+  #+END_SRC
+
+  Then get the ID so you can download the kubeconfig file:
+
+  #+BEGIN_SRC sh :dir /ssh:david:src/selenium-grid-kubernetes-example
+    export CLUSTER_ID=$(linode-cli lke clusters-list | grep sel | awk '{print $2}')
+    export CLUSTER_NAME=$(linode-cli lke clusters-list | grep sel | awk '{print $4}')
+
+    linode-cli lke kubeconfig-view $CLUSTER_ID --text \
+        | tail -1 \
+        | base64 --decode > ~/.kube/${CLUSTER_NAME}-config.yaml \
+        && echo OK || echo Failed
+  #+END_SRC
+* Nuking It
+  When you're done it's easy to throw everything away:
+
+  #+BEGIN_SRC sh :dir /ssh:david:src/selenium-grid-kubernetes-example
+    export CLUSTER_ID=$(linode-cli lke clusters-list | grep sel | awk '{print $2}')
+
+    linode-cli lke cluster-delete $CLUSTER_ID --text
+  #+END_SRC
+
