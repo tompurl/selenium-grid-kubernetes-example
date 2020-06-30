@@ -1,5 +1,6 @@
 #+TITLE: Dipping Our Toes Into Kubernetes For 12¢
 
+
 * Who am I?
   - Tom Purl (https://www.tompurl.com)
   - Automation Engineer at Wi-Tronix LLC
@@ -60,6 +61,9 @@
       serviceType: ClusterIP
     chromeDebug:
       enabled: true
+    firefoxDebug:
+      enabled: true
+      replicas: 2
     #+end_src
 *** More Installation Options Here
     - https://hub.helm.sh/charts/stable/selenium
@@ -83,12 +87,6 @@
     #+END_NOTES
 
     #+BEGIN_SRC sh
-      kubectl port-forward $HUB_POD 8080:8080
-    #+END_SRC
-*** What's My App's Proxy URL
-    - Selenium Grid also needs a "proxy" URL to which you send automation commands
-
-    #+BEGIN_SRC sh 
       kubectl port-forward $HUB_POD 4444:4444
     #+END_SRC
 *** Running the Tests
@@ -116,8 +114,12 @@
       firefox Output/log.html
     #+END_SRC
 *** Debugging the Test
-    - Port-forward VNC
-    - Connect using a VNC client
+    #+BEGIN_SRC sh
+      # Port forward the VNC port in window 1
+      kubectl port-forward $HUB_POD 5901:5900
+      # Connect to the port from window #2
+      vncviewer localhost:5901
+    #+END_SRC
 ** Throw It All Away :-)
    #+BEGIN_SRC sh
      kubectl uninstall selenium-test
