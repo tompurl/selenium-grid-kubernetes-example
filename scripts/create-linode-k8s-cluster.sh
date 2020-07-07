@@ -8,3 +8,7 @@ linode-cli lke cluster-create \
   --node_pools.type g6-standard-4 --node_pools.count 3 \
   --tags demo \
   --text
+
+echo "It looked like the creation was successful!"
+
+linode-cli lke clusters-list
