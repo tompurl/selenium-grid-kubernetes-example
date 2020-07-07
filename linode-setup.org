@@ -14,27 +14,35 @@
       --region us-central \
       --k8s_version 1.17 \
       --node_pools.type g6-standard-4 --node_pools.count 3 \
-      --tags demo
+      --tags demo \
       --text
   #+END_SRC
+
+  #+RESULTS:
 
   Then get the ID so you can download the kubeconfig file:
 
   #+BEGIN_SRC sh :dir /ssh:david:src/selenium-grid-kubernetes-example
-    export CLUSTER_ID=$(linode-cli lke clusters-list | grep sel | awk '{print $2}')
-    export CLUSTER_NAME=$(linode-cli lke clusters-list | grep sel | awk '{print $4}')
+    export CLUSTER_ID=$(linode-cli lke clusters-list --text | grep sel | awk '{print $1}')
+    export CLUSTER_NAME=$(linode-cli lke clusters-list --text | grep sel | awk '{print $2}')
 
     linode-cli lke kubeconfig-view $CLUSTER_ID --text \
         | tail -1 \
         | base64 --decode > ~/.kube/${CLUSTER_NAME}-config.yaml \
         && echo OK || echo Failed
   #+END_SRC
+
+  #+RESULTS:
+  : OK
+
 * Nuking It
   When you're done it's easy to throw everything away:
 
   #+BEGIN_SRC sh :dir /ssh:david:src/selenium-grid-kubernetes-example
-    export CLUSTER_ID=$(linode-cli lke clusters-list | grep sel | awk '{print $2}')
+    export CLUSTER_ID=$(linode-cli lke clusters-list --text | grep sel | awk '{print $1}')
 
-    linode-cli lke cluster-delete $CLUSTER_ID --text
+    linode-cli lke cluster-delete $CLUSTER_ID --text && echo OK || echo Failed
   #+END_SRC
+
+  #+RESULTS:
 
