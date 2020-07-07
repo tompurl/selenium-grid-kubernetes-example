@@ -52,7 +52,7 @@
     #+END_NOTES
 
     #+BEGIN_SRC sh :wrap src yaml :exports results :results code
-      cat values.yaml
+      cat ../values.yaml
     #+END_SRC
 
     #+RESULTS:
@@ -87,7 +87,7 @@
     #+END_NOTES
 
     #+BEGIN_SRC sh
-      kubectl port-forward $HUB_POD 4444:4444
+      kubectl port-forward --address 0.0.0.0 $HUB_POD 4444:4444
     #+END_SRC
 *** Running the Tests
     #+BEGIN_NOTES
@@ -122,5 +122,5 @@
     #+END_SRC
 ** Throw It All Away :-)
    #+BEGIN_SRC sh
-     kubectl uninstall selenium-test
+     helm uninstall selenium-test
    #+END_SRC
