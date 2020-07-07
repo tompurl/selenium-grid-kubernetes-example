@@ -8,7 +8,10 @@
 
 * Create a cluster
 
-  #+BEGIN_SRC sh :dir /ssh:david:src/selenium-grid-kubernetes-example
+  #+BEGIN_SRC sh :tangle scripts/create-linode-k8s-cluster.sh :tangle-mode (identity #o755) :padline no
+    #!/bin/bash
+    set -e
+
     linode-cli lke cluster-create \
       --label selenium-test-$(date +%Y%m%d%H%M) \
       --region us-central \
@@ -18,18 +21,33 @@
       --text
   #+END_SRC
 
-  #+RESULTS:
-
   Then get the ID so you can download the kubeconfig file:
 
-  #+BEGIN_SRC sh :dir /ssh:david:src/selenium-grid-kubernetes-example
+  #+BEGIN_SRC sh :tangle scripts/download-linode-k8s-kubeconfig.sh :tangle-mode (identity #o755) :padline no
+    #!/bin/bash
+    set -e
+
+    echo Warning: This script assumes that you have only one Linode LKE cluster.
+
     export CLUSTER_ID=$(linode-cli lke clusters-list --text | grep sel | awk '{print $1}')
     export CLUSTER_NAME=$(linode-cli lke clusters-list --text | grep sel | awk '{print $2}')
 
-    linode-cli lke kubeconfig-view $CLUSTER_ID --text \
+    test -d ~/.kube || mkdir -vp ~/.kube
+
+    test -f ~/.kube/${CLUSTER_NAME}-config.yaml \
+        || linode-cli lke kubeconfig-view $CLUSTER_ID --text \
         | tail -1 \
-        | base64 --decode > ~/.kube/${CLUSTER_NAME}-config.yaml \
-        && echo OK || echo Failed
+        | base64 --decode > ~/.kube/${CLUSTER_NAME}-config.yaml
+
+    cat <<EOF
+
+    It worked!
+
+    Now please execute the following command in each terminal that needs to
+    access this LKE cluster:
+
+    export KUBECONFIG=~/.kube/${CLUSTER_NAME}-config.yaml
+    EOF
   #+END_SRC
 
   #+RESULTS:
@@ -38,10 +56,26 @@
 * Nuking It
   When you're done it's easy to throw everything away:
 
-  #+BEGIN_SRC sh :dir /ssh:david:src/selenium-grid-kubernetes-example
+  #+BEGIN_SRC sh :tangle scripts/nuke-linode-k8s-cluster.sh :tangle-mode (identity #o755) :padline no
+    #!/bin/bash
+    set -e
+
+    cat <<EOF 2>
+    WARNING! This script does NOT come with any guarantee of working. PLEASE
+    __manually__ confirm that your cluster was deleted using the Linode web 
+    interface. 
+
+    The author of this script takes NO RESPONSIBILITY for any costs incurred
+    by using any Linode service!
+    EOF
+
     export CLUSTER_ID=$(linode-cli lke clusters-list --text | grep sel | awk '{print $1}')
 
-    linode-cli lke cluster-delete $CLUSTER_ID --text && echo OK || echo Failed
+    linode-cli lke cluster-delete $CLUSTER_ID
+
+    echo "It looked like the deletion was successful!"
+
+    linode-cli lke clusters-list
   #+END_SRC
 
   #+RESULTS:
