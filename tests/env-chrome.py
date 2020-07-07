@@ -1,4 +1,4 @@
-URL = 'https://www.tompurl.com'
+URL = 'https://www.whatsmybrowser.org'
 BROWSER = 'chrome'
 VERSION = '83.0'
 ALIAS = None

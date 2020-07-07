@@ -1,4 +1,4 @@
-URL = 'https://www.tompurl.com'
+URL = 'https://www.whatsmybrowser.org'
 BROWSER = 'firefox'
 VERSION = '76.0'
 ALIAS = None
