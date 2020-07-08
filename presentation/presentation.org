@@ -16,19 +16,25 @@
 ** Setting Up the Cluster
    #+BEGIN_NOTES
    - This will be done ahead of time
-     - 2 nodes, each with 8 GB of RAM and 4 VCPU's 
    - This is the "control plane", which seems to be a fancy way of saying an admin
      interface.
    #+END_NOTES
-   - https://github.com/tompurl/selenium-grid-kubernetes-example#create-your-cluster
+   Run the following script:
+   - [[file:/ssh:david:/home/tom/src/selenium-grid-kubernetes-example/scripts/create-linode-k8s-cluster.sh][scripts/create-linode-k8s-cluster.sh]]
 ** Selenium Installation
 *** kubectl - The Kubernetes Admin Command-Line Interface
+   #+BEGIN_NOTES
+   - Many kubernetes systems don't provide a graphical UI by default
+   - Only mature, vendor-independent interface
+   #+END_NOTES
     - =kubectl= is a tool that runs on your client that administers your Kubernetes
       cluster.
-*** How We're Installing - Helm
+    - Cross platform
+    - Not vendor-specific
+*** How We're Installing The System - Helm
     #+BEGIN_NOTES
     - Becoming a de-facto standard for package management
-    - Similar to =apt= for Debian or =homebrew= for a Mac
+    - If Kubernetes is the "OS", then helm is the "package manager".
     - Far from perfect :-)
     #+END_NOTES
     - https://helm.sh/
