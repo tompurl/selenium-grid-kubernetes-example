@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cat <<EOF 2>
+cat <<EOF
 WARNING! This script does NOT come with any guarantee of working. PLEASE
 __manually__ confirm that your cluster was deleted using the Linode web 
 interface. 
