@@ -1,50 +1,37 @@
 # Quick and Dirty Selenium Grid on Kubernetes
 
+## Overview
+
+With this repo you can quickly create a Selenium Grid cluster on top of a hosted
+Kubernetes cluster running at Linode. And then after poking around you can easily
+throw it away :-)
+
 ## Assumptions
 
 You have installed the followind:
 
+- A Linode account
+- The ``linode-cli`` script
 - Helm 3
 - kubectl
-- Python 3.8
-  - You can use a different 3.x version, as long as you update the value in the
-    `Pipfile`.
 
 ## Prereqs
 
 ### Create Your Cluster
-1. Obtain a Digital Ocean account
-   - You don't *have* to use DO and there are a lot of good Kubernetes hosts out
-     there, but the instructions below are specific to DO.
-2. Go to your DO dashboard and click on the following buttons:
-   - `Kubernetes -> Create -> Clusters`
-3. Under **Choose a datacenter region** choose the default.
-4. Under **Choose cluster capacity** choose the following:
-   - **Machine Type**: Standard nodes (shared CPU)
-   - **Number Nodes**: 2
-   - **vCPU's**: 4
-   - **RAM**: 8 GB
-5. The **Monthly Rate** for this should be $80 / month. Hopefully we'll only use it for less than a couple of hours (at $0.12 / hour).
-6. Under the **Choose a name** choose something descriptiive like **selenium-test**.
-7. Click on the **Create Cluster** button.
 
-It will take a few minutes for everything to spin up and auto-configure itself. In
-the meantime you should be able to click on the **Download Config File** button to -
-you guessed it - download the `kubectl` config file.
+Run the following script:
+
+[scripts/create-linode-k8s-cluster.sh](./scripts/create-linode-k8s-cluster.sh)
+
+It will take a few minutes for everything to spin up and auto-configure itself. 
 
 ### Configure kubeconfig
 
-After downloading the `kubectl` config file you should see a file with a name like
-this in your `Downloads` directory:
+Run this script:
 
-- `selenium-test-kubeconfig.yaml`
+[scripts/download-linode-k8s-kubeconfig.sh](./scripts/download-linode-k8s-kubeconfig.sh)
 
-Then configure `kubectl` to use it like this:
-
-``` terminal
-cp ~/Downloads/selenium-test-kubeconfig.yaml ~/.kube
-export KUBECONFIG=~/.kube/selenium-test-kubeconfig.yaml
-```
+Follow the directions in the output for configuring ``kubectl`` to use this config.
 
 **Note**: Please execute the `export` command above in **every console window** that
 is going to be interacting with your Kubernetes cluster.
@@ -58,12 +45,7 @@ configure our Selenium Grid installation.
 
 It should look something like this:
 
-``` yaml
-hub:
-  serviceType: ClusterIP
-chromeDebug:
-  enabled: true
-```
+[values.yaml](values.yaml)
 
 Here's, we're telling the helm package two things:
 
@@ -71,6 +53,7 @@ Here's, we're telling the helm package two things:
    network. This makes things much safer for our test.
 2. Run 1 "debug" version of the Chrome image in our grid.
    - The "debug" versions allow us to VNC into them, which is pretty sweet.
+3. Run 2 "debug" versions of the Firefox image.
    
 ## Installation
 
@@ -89,6 +72,8 @@ kubectl get pods
 ```
 
 When everything is running you'll see something like this:
+
+START HERE!!!
 
 ``` console
 NAME                                                   READY   STATUS    RESTARTS   AGE
